@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Portfolio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --text-color: #333;
+            --bg-color: #fff;
+            --card-bg: #f3f4f6;
+            --border-color: #e5e7eb;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #60a5fa;
+            --text-color: #e5e7eb;
+            --bg-color: #111827;
+            --card-bg: #1f2937;
+            --border-color: #374151;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+        }
+
+        .profile-info {
+            max-width: 600px;
+        }
+
+        .profile-info h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .achievement-card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .achievement-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .achievement-list {
+            list-style-type: none;
+        }
+
+        .achievement-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .achievement-list li::before {
+            content: "\2022";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .download-cv {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .download-cv:hover {
+            background-color: #1d4ed8;
+        }
+
+        .floating-menu {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 0 8px 8px 0;
+            padding: 0.5rem;
+            z-index: 1000;
+        }
+
+        .floating-menu a {
+            display: block;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .floating-menu a:hover {
+            background-color: #1d4ed8;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+
+        .language-switcher select {
+            font-size: 1rem;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-section {
+                text-align: center;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loading-screen">
+        <h1>Loading...</h1>
+    </div>
+
+    <header>
+        <button class="theme-toggle" aria-label="Toggle theme">
+            <i class="fas fa-moon"></i>
+        </button>
+        <div class="language-switcher">
+            <label for="language-select">Language:</label>
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+            </select>
+        </div>
+        <div class="profile-section">
+            <img src="image.jpeg" alt="Profile Picture" class="profile-img">
+            <div class="profile-info">
+                <h2>Monosij Roy</h2> <!-- Your name displayed here -->
+                <h1>Computer Science Researcher</h1>
+                <p>BTech CSE & MS Research Student @ IIIT-Hyderabad</p>
+                <p>Based in Bangalore, India</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/monosij-roy-9718b3286/" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/Leningrad-Sniper" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="resume.pdf" class="download-cv">Download CV</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="about">
+            <h2>About Me</h2>
+            <p>I am currently pursuing a Bachelors of Technology in Computer Science Engineering and an MS in Research
+                in Computer Science at the International Institute of Information Technology-Hyderabad (IIIT-H). My research
+                interests include Machine Learning, Artificial Intelligence, Game Theory, Algorithms, Number Theory, and Geometry.
+                I'm also passionate about Competitive Programming.</p>
+            <p>Outside of academics, I enjoy table tennis and football. I also play chess semi-professionally, having achieved
+                notable rankings in various state championships.</p>
+        </section>
+
+        <section id="achievements">
+            <h2>Achievements</h2>
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <h3>Academic Excellence</h3>
+                    <ul class="achievement-list">
+                        <li>NTSE Scholar (2021)</li>
+                        <li>KVPY Extended Merit List (2021)</li>
+                        <li>Qualified for INMO (2022)</li>
+                        <li>IIT JEE Mains-2023 AIR-4548 (99.61 percentile)</li>
+                        <li>ISI Entrance Exam-2023 AIR-68</li>
+                        <li>UGEE Entrance Exam-2023 AIR-26</li>
+                    </ul>
+                </div>
+                <div class="achievement-card">
+                    <h3>Olympiad Achievements</h3>
+                    <ul class="achievement-list">
+                        <li>Merit Certificate in Pre-RMO/IOQM (2019-2023)</li>
+                        <li>NMTC Stage-1 Qualified (2018, 2021, 2022)</li>
+                        <li>Merit Certificate in NSEA (2022)</li>
+                        <li>Cleared ZIO and qualified for INOI (2023)</li>
+                    </ul>
+                </div>
+                <div class="achievement-card">
+                    <h3>Chess Achievements</h3>
+                    <ul class="achievement-list">
+                        <li>9th Place, Under-9 Karnataka State Chess Championship (2014)</li>
+                        <li>2nd Place, Under-13 category in Under-15 Karnataka State Championship (2018)</li>
+                        <li>1st Place, U-1500 category Karnataka State Championship (2019)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="floating-menu">
+        <a href="#about">About</a>
+        <a href="#achievements">Achievements</a>
+    </nav>
+
+    <script>
+        const themeToggle = document.querySelector('.theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+
+            // Update icon
+            themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+            // Save preference
+            localStorage.setItem('theme', newTheme);
+        }
+
+        const loadingScreen = document.getElementById('loading-screen');
+        window.addEventListener('load', () => {
+            loadingScreen.classList.add('hidden');
+        });
+
+        const smoothLinks = document.querySelectorAll('a[href^="#"]');
+        smoothLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        themeToggle.addEventListener('click', toggleTheme);
+        const translations = {
+        en: {
+            title: "Personal Portfolio",
+            aboutTitle: "About Me",
+            aboutText1: "I am currently pursuing a Bachelors of Technology in Computer Science Engineering and an MS in Research in Computer Science at the International Institute of Information Technology-Hyderabad (IIIT-H). My research interests include Machine Learning, Artificial Intelligence, Game Theory, Algorithms, Number Theory, and Geometry. I'm also passionate about Competitive Programming.",
+            aboutText2: "Outside of academics, I enjoy table tennis and football. I also play chess semi-professionally, having achieved notable rankings in various state championships.",
+            achievementsTitle: "Achievements",
+            academicExcellence: "Academic Excellence",
+            olympiadAchievements: "Olympiad Achievements",
+            chessAchievements: "Chess Achievements",
+            
+            // Add more as needed
+        },
+        hi: {
+            title: "व्यक्तिगत पोर्टफोलियो",
+            aboutTitle: "मेरे बारे में",
+            aboutText1: "मैं वर्तमान में अंतर्राष्ट्रीय सूचना प्रौद्योगिकी संस्थान-हैदराबाद (IIIT-H) में कंप्यूटर विज्ञान इंजीनियरिंग में प्रौद्योगिकी स्नातक और कंप्यूटर विज्ञान में अनुसंधान में एमएस कर रहा हूं। मेरे शोध रुचियों में मशीन लर्निंग, कृत्रिम बुद्धिमत्ता, खेल सिद्धांत, एल्गोरिदम, संख्या सिद्धांत और ज्यामिति शामिल हैं। मुझे प्रतिस्पर्धी प्रोग्रामिंग का भी शौक है।",
+            aboutText2: "शैक्षणिक क्षेत्र के बाहर, मुझे टेबल टेनिस और फुटबॉल पसंद है। मैं शतरंज को अर्ध-पेशेवर रूप से खेलता हूं, और विभिन्न राज्य चैम्पियनशिप में उल्लेखनीय रैंकिंग प्राप्त की है।",
+            achievementsTitle: "उपलब्धियां",
+            academicExcellence: "शैक्षणिक उत्कृष्टता",
+            olympiadAchievements: "ओलंपियाड उपलब्धियां",
+            chessAchievements: "शतरंज उपलब्धियां",
+            
+            // Add more as needed
+        }
+    };
+
+    document.getElementById('language-select').addEventListener('change', (event) => {
+        const selectedLanguage = event.target.value;
+
+        // Update the content dynamically
+        document.title = translations[selectedLanguage].title;
+        document.querySelector('#about h2').textContent = translations[selectedLanguage].aboutTitle;
+        document.querySelector('#about p:nth-of-type(1)').textContent = translations[selectedLanguage].aboutText1;
+        document.querySelector('#about p:nth-of-type(2)').textContent = translations[selectedLanguage].aboutText2;
+        document.querySelector('#achievements h2').textContent = translations[selectedLanguage].achievementsTitle;
+
+        // Update achievements
+        const cards = document.querySelectorAll('.achievement-card h3');
+        cards[0].textContent = translations[selectedLanguage].academicExcellence;
+        cards[1].textContent = translations[selectedLanguage].olympiadAchievements;
+        cards[2].textContent = translations[selectedLanguage].chessAchievements;
+        
+    });
+    </script>
+</body>
+</html>
